@@ -76,8 +76,6 @@
             text-transform: lowercase;
             line-height: 1;
             color: var(--main);
-
-            /* 3D shadow depth for title */
             text-shadow: 
                 1px 1px 0px rgba(0,0,0,0.15),
                 2px 2px 0px rgba(0,0,0,0.1),
@@ -91,10 +89,9 @@
             min-height: 4.5em; 
             margin: 0;
             color: var(--main);
-            position: relative; /* Stays above background */
+            position: relative;
         }
 
-        /* 3D shadow depth for description (slightly lighter for smaller font) */
         #typewriter .text {
             text-shadow: 
                 1px 1px 0px rgba(0,0,0,0.1),
@@ -109,7 +106,6 @@
             margin-left: 4px;
             vertical-align: middle;
             animation: blink 1s step-end infinite;
-            position: relative; /* Alignment */
         }
 
         @keyframes blink {
@@ -199,16 +195,40 @@
             margin-top: 8px;
         }
 
+        /* --- 核心修改部分：实现从左到右展开的横线悬浮效果 --- */
         .member a {
             color: inherit;
             text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: border-color 0.3s;
+            display: inline-block;
+            position: relative; /* 为伪元素提供定位基准 */
+            transition: all 0.3s ease;
+            padding-bottom: 2px; /* 为横线留出一点空间 */
         }
 
-        .member a:hover {
-            border-color: var(--main);
+        /* 默认状态：利用伪元素画出横线，并缩放为0 */
+        .member a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px; /* 横线高度 */
+            bottom: 0;
+            left: 0;
+            background-color: var(--main); /* 横线颜色 */
+            transform: scaleX(0); /* 初始状态下横线长度为0 */
+            transform-origin: bottom left; /* 设置缩放的原点为左下角，实现从左展开 */
+            transition: transform 0.3s ease; /* 动画过渡 */
         }
+
+        /* 悬浮状态：伪元素缩放恢复为1，文字轻微上浮 */
+        .member a:hover {
+            transform: translateY(-2px); /* 保持整体上浮的 3D 深度感 */
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.08); /* 配合上浮的微妙阴影 */
+        }
+
+        .member a:hover::after {
+            transform: scaleX(1); /* 悬浮时横线完全展开 */
+        }
+        /* --- 修改结束 --- */
 
         footer {
             padding: 50px 0 80px 0;
@@ -287,7 +307,10 @@
                         <div class="team-grid">
                             <div class="member">Jingming ZHANG <span>"JM the GOAT"</span></div>
                             <div class="member">Jiaming LEI <span>Ray the Shark</span></div>
-                            <div class="member">Xiaobo HUANG <span>Albert the Ape</span></div>
+                            <div class="member">
+                                <a href="https://albert-x-alt.github.io/" target="_blank">Xiaobo HUANG</a>
+                                <span>Albert the Ape</span>
+                            </div>
                         </div>
                     </div>
 
