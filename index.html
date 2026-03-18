@@ -15,7 +15,6 @@
         body {
             background-color: var(--bg);
             color: var(--main);
-            /* 使用系统原生最顶级无衬线字体 */
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
             margin: 0;
             -webkit-font-smoothing: antialiased;
@@ -34,18 +33,41 @@
 
         h1 {
             font-size: 4.2rem;
-            font-weight: 500; /* 模仿截图，不要太粗，选500 */
-            letter-spacing: -0.05em; /* 紧凑字间距是灵魂 */
+            font-weight: 500; 
+            letter-spacing: -0.05em; 
             margin: 0 0 30px 0;
             text-transform: lowercase;
+            color: var(--main);
         }
 
+        /* Fixed height to prevent layout shift; adjusted to regular block for stable cursor */
         .hero-desc {
             font-size: 1.5rem;
             line-height: 1.4;
             font-weight: 400;
             max-width: 750px;
             color: var(--main);
+            min-height: 4.5em; /* Pre-allocate space */
+            margin: 0;
+        }
+
+        .text {
+            white-space: pre-wrap; /* Keeps spaces natural */
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 1px;
+            height: 1.2em;
+            background-color: var(--main);
+            margin-left: 4px;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            from, to { background-color: transparent; }
+            50% { background-color: var(--main); }
         }
 
         .section {
@@ -92,6 +114,7 @@
             background: #fafafa;
             padding: 40px;
             border-radius: 2px;
+            overflow-x: auto;
         }
 
         .team-container {
@@ -128,6 +151,28 @@
             margin-top: 8px;
         }
 
+        .member a {
+            color: inherit;
+            text-decoration: none;
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .member a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--main);
+            transition: width 0.3s ease;
+        }
+
+        .member a:hover::after {
+            width: 100%;
+        }
+
         footer {
             margin-top: 120px;
             padding-top: 50px;
@@ -136,13 +181,31 @@
             color: var(--secondary);
             line-height: 2;
         }
+
+        @media (max-width: 1024px) {
+            .container { padding: 100px 40px; }
+            .section { grid-template-columns: 200px 1fr; }
+            .grid { gap: 40px; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            .hero-desc { font-size: 1.2rem; min-height: 6em; }
+            .section { grid-template-columns: 1fr; padding: 40px 0; }
+            .section-label { margin-bottom: 20px; }
+            .grid { grid-template-columns: 1fr; gap: 40px; }
+            .team-grid { grid-template-columns: 1fr; gap: 30px; }
+            header { margin-bottom: 80px; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>universal generator.</h1>
-            <p class="hero-desc">Bridging formal compiler semantics with autonomous intelligence to build verifiable generative systems.</p>
+            <div class="hero-desc" id="typewriter">
+                <span class="text"></span><span class="cursor"></span>
+            </div>
         </header>
 
         <section class="section">
@@ -162,9 +225,9 @@
         <section class="section">
             <div class="section-label">02 / Structure</div>
             <pre><code>/generator
-  ├── lexer.mll   // lexical analysis
-  ├── parser.mly  // syntax definition
-  └── ast.ml      // tree structures</code></pre>
+  ├── lexer.mll
+  ├── parser.mly
+  └── ast.ml</code></pre>
         </section>
 
         <section class="section">
@@ -183,7 +246,10 @@
                     <h4>Founding & Supervision</h4>
                     <div class="team-grid">
                         <div class="member">Jiesen LONG <span>Project Founder</span></div>
-                        <div class="member">Zhiyuan "Big Bro" LI, PhD <span>Principal Supervisor</span></div>
+                        <div class="member">
+                            <a href="https://www.bnbu.edu.cn/en/faculty.htm#/goliathli/en" target="_blank">Zhiyuan "Big Bro" LI, PhD</a>
+                            <span>Principal Supervisor</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -194,5 +260,22 @@
             Beijing Normal-Hong Kong Baptist University.
         </footer>
     </div>
+
+    <script>
+        const content = "Bridging formal compiler semantics with autonomous intelligence to build verifiable generative systems.";
+        const speed = 40;
+        const textContainer = document.querySelector('#typewriter .text');
+        
+        let index = 0;
+        function renderTypewriter() {
+            if (index < content.length) {
+                textContainer.textContent += content.charAt(index);
+                index++;
+                setTimeout(renderTypewriter, speed);
+            }
+        }
+
+        window.addEventListener('load', renderTypewriter);
+    </script>
 </body>
 </html>
